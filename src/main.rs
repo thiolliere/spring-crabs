@@ -1,6 +1,20 @@
 #[macro_use]
 extern crate glium;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
+extern crate toml;
 
+#[derive(Deserialize)]
+struct Configuration {
+    cond: bool,
+}
+
+lazy_static! {
+    static ref CFG: Configuration = toml::from_str("cond = true").unwrap();
+}
 
 use std::cell::RefCell;
 use std::ptr::null_mut;
@@ -9,9 +23,14 @@ use std::os::raw::{c_int, c_void};
 use glium::{DisplayBuild, Surface};
 
 fn main() {
-    let display = glium:: glutin::WindowBuilder::new()
-        .with_depth_buffer(24)
-        .build_glium().unwrap();
+    let mut builder = glium:: glutin::WindowBuilder::new()
+        .with_fullscreen(glium::glutin::get_primary_monitor())
+        .with_depth_buffer(24);
+
+    let cond = CFG.cond;
+
+    let display = builder.build_glium().unwrap();
+    display.get_window().unwrap().set_cursor_state(glium::glutin::CursorState::Grab).unwrap();
 
     #[derive(Copy, Clone)]
     struct Vertex {
@@ -55,6 +74,9 @@ fn main() {
     let mut v = 0.002;
 
     set_main_loop_callback(|| {
+        for event in display.poll_events() {
+            println!("{:?}", event);
+        }
         // we update `t`
         t += v;
         if t > 0.5 {

@@ -6,8 +6,10 @@ version = "0.0.1"
 glium = "^0.16.0"
 cgmath = "^0.12"
 libc = "0.2.20"
+lazy_static = "*"
+toml = "0.4"
+serde = "1.0"
+serde_derive = "1.0"
 
 [replace]
-"glutin:0.7.4" = { path = "../glutin" }
-# "backtrace:*" = { git = "https://github.com/badboy/backtrace-rs", branch = "emscripten-fix" }
-
+"glutin:0.7.4" = { git = 'https://github.com/cactorium/glutin' }
